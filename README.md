@@ -4,7 +4,10 @@
 <p align="center">
   <img src="https://media.giphy.com/media/xThuWu82QD3pj4wvEQ/giphy.gif" alt="homework" width="50%">
 <p>
-### Mitglieder
+
+
+Mitglieder
+----
 
 > Oliver Kütemeier
 
