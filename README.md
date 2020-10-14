@@ -16,7 +16,7 @@
 
 ## License
 
-[MIT](https://de.wikipedia.org/wiki/MIT-Lizenz#:~:text=Die%20MIT%2DLizenz%2C%20auch%20X,freiz%C3%BCgige%20Open%2DSource%2DLizenz.)
+[MIT](.//LICENSE)
 
 **Free Software, Hell Yeah!**
 A commit
