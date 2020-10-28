@@ -1,10 +1,10 @@
 <template>
   <div id="app">
     <h1>News List</h1>
-    <List 
-      :listItems='news'
-      v-on:delete-item='deleteItem($event)'
-      v-on:update-item='updateItem($event)'
+    <List
+        :listItems='news'
+        v-on:delete-item='deleteItem($event)'
+        v-on:update-item='updateItem'
     ></List>
     <BasicInput v-on:create-item='createItem($event)'></BasicInput>
   </div>
@@ -12,19 +12,19 @@
 
 
 <script>
-import  List  from './components/List' 
-import  BasicInput  from './components/BasicInput' 
+import List from './components/List'
+import BasicInput from './components/BasicInput'
 
 export default {
   name: 'App',
-  components:{
+  components: {
     List,
     BasicInput
   },
   data: function () {
     return {
       counter: 3,
-      news:[
+      news: [
         {
           id: 0,
           title: 'post 1',
@@ -41,37 +41,37 @@ export default {
           votes: 1
         }
       ],
-    }  
+    }
   },
   methods: {
-    createItem: function(newTitle) {
+    createItem: function (newTitle) {
       this.news.push({
-          id: this.counter++,
-          title: newTitle,
-          votes: 0
+        id: this.counter++,
+        title: newTitle,
+        votes: 0
       });
       this.sortItems();
     },
-    deleteItem: function(item) {
-      this.news = this.news.filter(el => el.id != item.id);
+    deleteItem: function (item) {
+      this.news = this.news.filter(el => el.id !== item.id);
     },
-    updateItem: function(item) {
-      this.news.map(el => {
-        if (el.id == item.id) {
+    updateItem: function (item) {
+      this.news = this.news.map(el => {
+        if (el.id === item.id) {
           return item
         }
         return el
       })
       this.sortItems();
     },
-    sortItems: function() {
-      this.news = [...this.news].sort((a,b) => (a.votes < b.votes) ? 1 : ((b.votes < a.votes) ? -1 : 0));
+    sortItems: function () {
+      this.news = [...this.news].sort((a, b) => (a.votes < b.votes) ? 1 : ((b.votes < a.votes) ? -1 : 0));
     }
   },
-  mounted: function() {
+  mounted: function () {
     this.sortItems()
   },
-  
+
 }
 </script>
 

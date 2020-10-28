@@ -1,11 +1,11 @@
 <template>
   <div id="list-item">
-    
-    <h2>{{item.title}} - ({{item.votes}})</h2>
-    <button @click="upvoteItem();$emit('update-item', item)">Upvote</button>
-    <button @click="downvoteItem();$emit('update-item', item)">Downvote</button>
+
+    <h2>{{ item.title }} - ({{ item.votes }})</h2>
+    <button @click="upvoteItem()">Upvote</button>
+    <button @click="downvoteItem()">Downvote</button>
     <button @click="$emit('delete-item', item)">Remove</button>
-    <br />
+    <br/>
   </div>
 </template>
 
@@ -14,14 +14,14 @@
 export default {
   name: 'ListItem',
   props: [
-      'item'
+    'item'
   ],
   methods: {
-    upvoteItem: function() {
-      this.item.votes++;
+    upvoteItem: function () {
+      this.$emit('update-item', {...this.item, votes: this.item.votes + 1})
     },
-    downvoteItem: function() {
-      this.item.votes--;
+    downvoteItem: function () {
+      this.$emit('update-item', {...this.item, votes: this.item.votes - 1})
     }
   }
 }
