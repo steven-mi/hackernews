@@ -44,6 +44,9 @@ describe('Given a non empty list of items', () => {
         expect(wrapper.text()).toContain('post 2');
         expect(wrapper.text()).toContain('post 3');
     })
+    it('does not render empty state', () => {
+        !expect(wrapper.text()).not.toContain('The list is empty :(');
+    })
     describe('when pressing sort button', () => {
         beforeEach(() => {
             wrapper.find("button#button_sort").trigger('click')

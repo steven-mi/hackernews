@@ -14,7 +14,7 @@ export default {
   props: [],
   data() {
     return {
-      newTitle: 'hallo '
+      newTitle: ''
     }
   }
 
