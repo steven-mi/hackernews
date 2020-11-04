@@ -1,5 +1,5 @@
 import {mount} from '@vue/test-utils'
-import List from '../components/List'
+import List from './List'
 
 describe('Given a empty list of items', () => {
     let wrapper;
@@ -49,7 +49,7 @@ describe('Given a non empty list of items', () => {
             wrapper.find("button#button_sort").trigger('click')
         });
         it('sort method is emitted', () => {
-            expect(wrapper.emitted("sort-list")).toBeTruthy();
+            expect(wrapper.emitted("sort-item")).toBeTruthy();
         })
     });
 })
