@@ -5,7 +5,7 @@
         :listItems='sortedNews'
         v-on:delete-item='deleteItem($event)'
         v-on:update-item='updateItem'
-        v-on:sort-item="decending = !decending"
+        v-on:sort-item="descending = !descending"
     ></List>
     <BasicInput v-on:create-item='createItem($event)'></BasicInput>
   </div>
@@ -25,7 +25,7 @@ export default {
   data: function () {
     return {
       counter: 3,
-      decending: true,
+      descending: true,
       news: [
         {
           id: 0,
@@ -67,7 +67,7 @@ export default {
   },
   computed: {
     sortedNews: function () {
-      if (this.decending) {
+      if (this.descending) {
         return [...this.news].sort((a, b) => (a.votes < b.votes) ? 1 : ((b.votes < a.votes) ? -1 : 0));
       } else {
         return [...this.news].sort((a, b) => (a.votes > b.votes) ? 1 : ((b.votes > a.votes) ? -1 : 0));
