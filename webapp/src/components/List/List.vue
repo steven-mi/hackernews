@@ -3,6 +3,7 @@
     <ListItem
         v-for="item in listItems"
         :key="item.id"
+        :id="item.id"
         :item="item"
         v-on:delete-item="$emit('delete-item', $event)"
         v-on:update-item="$emit('update-item', $event)"
