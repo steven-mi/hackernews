@@ -1,5 +1,5 @@
 import {mount} from '@vue/test-utils'
-import ListItem from "../components/ListItem";
+import ListItem from "./ListItem";
 
 describe('Given a item', () => {
     let wrapper;

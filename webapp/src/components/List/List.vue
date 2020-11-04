@@ -15,7 +15,7 @@
 
 
 <script>
-import ListItem from './ListItem'
+import ListItem from '../ListItem/ListItem'
 
 export default {
   name: 'List',

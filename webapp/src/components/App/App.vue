@@ -13,8 +13,8 @@
 
 
 <script>
-import List from './components/List'
-import BasicInput from './components/BasicInput'
+import List from '../List/List'
+import BasicInput from '../BasicInput/BasicInput'
 
 export default {
   name: 'App',
