@@ -13,6 +13,11 @@ describe('Given a empty list of items', () => {
     it('renders empty state', () => {
         expect(wrapper.text()).toContain('The list is empty :(');
     })
+    it('does not render each item', () => {
+        expect(wrapper.text()).not.toContain('post 1');
+        expect(wrapper.text()).not.toContain('post 2');
+        expect(wrapper.text()).not.toContain('post 3');
+    })
 })
 describe('Given a non empty list of items', () => {
     let wrapper;
