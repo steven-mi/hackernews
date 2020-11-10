@@ -38,7 +38,6 @@ describe('Given a non empty list of items and descending order', () => {
         });
         it('list items should be descending', () => {
             expect(wrapper.text()).toMatch(/post 1.*post 2.*post 3/);
-
             expect(wrapper.text()).not.toMatch(/post 1.*post 3.*post 2/);
             expect(wrapper.text()).not.toMatch(/post 2.*post 3.*post 1/);
             expect(wrapper.text()).not.toMatch(/post 2.*post 1.*post 3/);
