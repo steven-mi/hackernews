@@ -12,5 +12,8 @@
   "dependencies": {
     "apollo-server": "^2.19.0",
     "graphql": "^15.4.0"
+  },
+  "devDependencies": {
+    "apollo-server-testing": "^2.19.0"
   }
 }
