@@ -1,8 +1,10 @@
 <template>
   <div id="basic-Input">
     <form @submit.prevent>
-      <input v-model='newTitle'>
-      <button @click="$emit('create-item', newTitle)">create</button>
+      <label>
+        <input v-model='newTitle'>
+        <button @click="$emit('create-item', newTitle)">create</button>
+      </label>
     </form>
   </div>
 </template>
@@ -14,7 +16,7 @@ export default {
   props: [],
   data() {
     return {
-      newTitle: 'hallo '
+      newTitle: ''
     }
   }
 
