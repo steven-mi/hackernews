@@ -22,27 +22,6 @@ const typeDefs = gql`
   }
 `;
 
-const posts = [
-  {
-    id: "post0",
-    title: "post 1",
-    votes: 0,
-    author: "alice",
-  },
-  {
-    id: "post1",
-    title: "post 2",
-    votes: 0,
-    author: "alice",
-  },
-  {
-    id: "post2",
-    title: "post 3",
-    votes: 1,
-    author: "bob",
-  },
-];
-
 const users = [
   {
     name: "alice",
@@ -54,11 +33,36 @@ const users = [
   },
 ];
 
+const posts = [
+  {
+    id: "post0",
+    title: "post 1",
+    votes: 0,
+    author: users[0],
+  },
+  {
+    id: "post1",
+    title: "post 2",
+    votes: 0,
+    author: users[1],
+  },
+  {
+    id: "post2",
+    title: "post 3",
+    votes: 1,
+    author: users[1],
+  },
+];
+
 const resolvers = {
   Query: {
     posts: () => posts,
     users: () => users,
   },
+  User: {
+    posts: (user) => posts.filter( (post) => post.author.name === user.name)
+  },
+
 };
 
 const server = new ApolloServer({ typeDefs, resolvers });
