@@ -19,6 +19,7 @@ export class InMemoryDataSource extends DataSource {
     constructor() {
         super()
         this.posts = []
+        this.users = []
     }
 
     initialize(...args) {
@@ -28,12 +29,25 @@ export class InMemoryDataSource extends DataSource {
     createPost(data) {
         const newPost = new Post(data)
         this.posts.push(newPost)
+
+        const newUsers = this.users.map(user => user.id === newPost.author.id ? user.posts.add(newPost.id) : user)
+        this.users = [...newUsers]
+
         return newPost
     }
 
     createUser(data) {
-        const newPost = new Post(data)
-        this.posts.push(newPost)
-        return newPost
+        const newUser = new User(data)
+        this.users.push(newUser)
+        return newUser
+    }
+
+    addPostToUser(user, post) {
+        this.users.forEach(element => {
+            if (element.id === post.author.id) {
+                user.posts.add(post.id)
+            }
+        });
+
     }
 }

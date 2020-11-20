@@ -4,34 +4,39 @@ import { Post, InMemoryDataSource } from './db'
 
 const db = new InMemoryDataSource()
 
-const users = [{
-        name: "alice",
-        posts: ["post0", "post1"]
+db.users = [{
+        name: "Alice",
+        posts: ["post 1", "post 2"],
+        upvotes: []
     },
     {
-        name: "bob",
-        posts: ["post2"],
+        name: "Bob",
+        posts: ["post 3"],
+        upvotes: []
     },
+    {
+        name: "Hans",
+        posts: [],
+        upvotes: []
+    }
+
 ];
-
-
-
 
 db.posts = [
     new Post({
         title: "post 1",
         votes: 0,
-        author: users[0],
+        author: db.users[0],
     }),
     new Post({
         title: "post 2",
         votes: 0,
-        author: users[0],
+        author: db.users[0],
     }),
     new Post({
         title: "post 3",
         votes: 0,
-        author: users[0],
+        author: db.users[1],
     })
 ]
 
@@ -46,11 +51,12 @@ const context = ({ req, res }) => ({ req, res })
 const resolvers = {
     Query: {
         posts: (parent, args, context) => context.dataSources.db.posts,
-        users: () => users,
+        users: (parent, args, context) => context.dataSources.db.users,
     },
     User: {
-        posts: (user) => posts.filter((post) => post.author.name === user.name)
-    },
+        posts: (parent, args, context, info) =>
+            context.dataSources.db.posts.filter((post) => post.author.name === parent.name)
+    }
 
 };
 
