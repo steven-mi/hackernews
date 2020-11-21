@@ -41,6 +41,7 @@ export class InMemoryDataSource extends DataSource {
 
         return newPost
     }
+
     upvotePost(data) {
         const voter = this.users.find(user => user.name === data.voter.name)
         const newPosts = this.posts.map(post => post.id === data.id && post.votes.find(user => user.name === voter.name) === undefined ? this.addVoter(post, voter) : post)
@@ -48,11 +49,11 @@ export class InMemoryDataSource extends DataSource {
 
         return this.posts.find(post => post.id === data.id)
     }
+
     getVotes(postId) {
         return this.posts.find(post => post.id === postId).votes.length
     }
 
-    // Helper
     addVoter(post, voter) {
         post.votes.push(voter)
         return post
@@ -62,8 +63,6 @@ export class InMemoryDataSource extends DataSource {
         author.posts.push(post)
         return author
     }
-
-
 
     // Init with dummydata
     initDummyUsers() {
