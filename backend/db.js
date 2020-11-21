@@ -42,12 +42,4 @@ export class InMemoryDataSource extends DataSource {
         return newUser
     }
 
-    addPostToUser(user, post) {
-        this.users.forEach(element => {
-            if (element.id === post.author.id) {
-                user.posts.add(post.id)
-            }
-        });
-
-    }
 }

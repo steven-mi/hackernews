@@ -25,17 +25,17 @@ db.users = [{
 db.posts = [
     new Post({
         title: "post 1",
-        votes: 0,
+        votes: [],
         author: db.users[0],
     }),
     new Post({
         title: "post 2",
-        votes: 0,
+        votes: [],
         author: db.users[0],
     }),
     new Post({
         title: "post 3",
-        votes: 0,
+        votes: [],
         author: db.users[1],
     })
 ]

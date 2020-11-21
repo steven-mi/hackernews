@@ -1,10 +1,10 @@
 import { gql } from 'apollo-server'
 
-const typeDefs = gql`
+const typeDefs = gql `
   type Post {
     id: ID!
     title: String!
-    votes: Int!
+    votes: [User]
     author: User!
   }
 
@@ -17,7 +17,6 @@ const typeDefs = gql`
     posts: [Post]
     users: [User]
   }
-`
-;
+`;
 
 export default typeDefs
