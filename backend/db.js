@@ -32,17 +32,34 @@ export class InMemoryDataSource extends DataSource {
         const newPost = new Post(data)
         this.posts.push(newPost)
 
-        const newUsers = this.users.map(user => user.id === newPost.author.id ? user.posts.add(newPost.id) : user)
+        const newUsers = this.users.map(user => user.id === newPost.author.id ? this.addPostToAuthor(newPost, user) : user)
         this.users = [...newUsers]
 
         return newPost
     }
+    upvotePost(data) {
+        const voter = this.users.find(user => user.name === data.voter.name)
+        const newPosts = this.posts.map(post => post.id === data.id && post.votes.find(user => user.name === voter.name) === undefined ? this.addVoter(post, voter) : post)
+        this.posts = [...newPosts]
 
-    createUser(data) {
-        const newUser = new User(data)
-        this.users.push(newUser)
-        return newUser
+        return this.posts.find(post => post.id === data.id)
     }
+    getVotes(postId) {
+        return this.posts.find(post => post.id === postId).votes.length
+    }
+
+    // Helper
+    addVoter(post, voter) {
+        post.votes.push(voter)
+        return post
+    }
+
+    addPostToAuthor(post, author) {
+        author.posts.push(post)
+        return author
+    }
+
+
 
     // Init with dummydata
     initDummyUsers() {
@@ -50,17 +67,14 @@ export class InMemoryDataSource extends DataSource {
             new User({
                 name: "Alice",
                 posts: ["post 1", "post 2"],
-                upvotes: []
             }),
             new User({
                 name: "Bob",
-                posts: ["post 3"],
-                upvotes: []
+                posts: ["post 3"]
             }),
             new User({
                 name: "Hans",
-                posts: [],
-                upvotes: []
+                posts: []
             })
         ];
         console.log("Initialize 3 dummyusers.")
@@ -84,6 +98,6 @@ export class InMemoryDataSource extends DataSource {
                 author: this.users[1],
             })
         ]
-        console.log("Initialize 3 dummypostss.")
+        console.log("Initialize 3 dummyposts.")
     }
 }
