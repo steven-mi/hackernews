@@ -4,7 +4,7 @@ const typeDefs = gql `
   type Post {
     id: ID!
     title: String!
-    votes: [User]
+    votes: Int!
     author: User!
   }
 
@@ -16,6 +16,31 @@ const typeDefs = gql `
   type Query {
     posts: [Post]
     users: [User]
+  }
+
+  type Mutation {
+    write(post: PostInput!): Post
+    # 🚀 OPTIONAL
+    # delete(id: ID!): Post
+
+    # ⚠️ FIXME in exercise #4
+    # mock voter until we have authentication
+    upvote(id: ID!, voter: UserInput!): Post
+
+    # 🚀 OPTIONAL
+    # downvote(id: ID!, voter: UserInput!): Post
+  }
+
+  input PostInput {
+    title: String!
+
+    # ⚠️ FIXME in exercise #4
+    # mock author until we have authentication
+    author: UserInput!
+  }
+
+  input UserInput {
+    name: String!
   }
 `;
 
