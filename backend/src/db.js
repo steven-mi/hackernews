@@ -81,15 +81,12 @@ export class InMemoryDataSource extends DataSource {
         this.users = [
             new User({
                 name: "Alice",
-                posts: ["post 1", "post 2"],
             }),
             new User({
                 name: "Bob",
-                posts: ["post 3"]
             }),
             new User({
                 name: "Hans",
-                posts: []
             })
         ];
         console.log("Initialize 3 dummyusers.")
