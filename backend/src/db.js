@@ -38,8 +38,6 @@ export class InMemoryDataSource extends DataSource {
                 author: author
             })
             this.posts.push(newPost)
-            const newUsers = this.users.map(user => user.id === newPost.author.id ? this.addPostToAuthor(newPost, user) : user)
-            this.users = [...newUsers]
 
             return newPost
         } else {
