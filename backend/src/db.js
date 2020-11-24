@@ -5,6 +5,7 @@ import {AuthenticationError, UserInputError} from "apollo-server-errors";
 export class Post {
     constructor(data) {
         this.id = crypto.randomBytes(16).toString('hex')
+        this.votes = [],
         Object.assign(this, data)
     }
 }
@@ -99,17 +100,14 @@ export class InMemoryDataSource extends DataSource {
         this.posts = [
             new Post({
                 title: "post 1",
-                votes: [],
                 author: this.users[0],
             }),
             new Post({
                 title: "post 2",
-                votes: [],
                 author: this.users[0],
             }),
             new Post({
                 title: "post 3",
-                votes: [],
                 author: this.users[1],
             })
         ]
