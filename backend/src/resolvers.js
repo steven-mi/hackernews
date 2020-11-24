@@ -4,7 +4,7 @@ export const resolvers = {
         users: (parent, args, context) => context.dataSources.db.users,
     },
     User: {
-        posts: (parent, args, context, info) =>
+        posts: (parent, args, context) =>
             context.dataSources.db.posts.filter((post) => post.author.name === parent.name)
     },
     Post: {

@@ -20,22 +20,17 @@ const typeDefs = gql `
 
   type Mutation {
     write(post: PostInput!): Post
-    # 🚀 OPTIONAL
+    # OPTIONAL
     # delete(id: ID!): Post
 
-    # ⚠️ FIXME in exercise #4
-    # mock voter until we have authentication
     upvote(id: ID!, voter: UserInput!): Post
 
-    # 🚀 OPTIONAL
+    # OPTIONAL
     # downvote(id: ID!, voter: UserInput!): Post
   }
 
   input PostInput {
     title: String!
-
-    # ⚠️ FIXME in exercise #4
-    # mock author until we have authentication
     author: UserInput!
   }
 
