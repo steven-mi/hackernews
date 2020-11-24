@@ -1,5 +1,6 @@
-import { DataSource } from 'apollo-datasource'
+import {DataSource} from 'apollo-datasource'
 import crypto from 'crypto'
+import {AuthenticationError, UserInputError} from "apollo-server-errors";
 
 export class Post {
     constructor(data) {
@@ -25,36 +26,47 @@ export class InMemoryDataSource extends DataSource {
     }
 
     initialize(...args) {
-        //Warum wird diese Methode so oft ausgeführt?
     }
 
     createPost(data) {
         const author = this.users.find(user => user.name === data.post.author.name)
-        const newPost = new Post({
-            title: data.post.title,
-            votes: [],
-            author: author
-        })
-        this.posts.push(newPost)
-        const newUsers = this.users.map(user => user.id === newPost.author.id ? this.addPostToAuthor(newPost, user) : user)
-        this.users = [...newUsers]
 
-        return newPost
+        if (author) {
+            const newPost = new Post({
+                title: data.post.title,
+                votes: [],
+                author: author
+            })
+            this.posts.push(newPost)
+            const newUsers = this.users.map(user => user.id === newPost.author.id ? this.addPostToAuthor(newPost, user) : user)
+            this.users = [...newUsers]
+
+            return newPost
+        } else {
+            throw new AuthenticationError("User does not exist");
+        }
     }
 
     upvotePost(data) {
         const voter = this.users.find(user => user.name === data.voter.name)
-        const newPosts = this.posts.map(post => post.id === data.id && post.votes.find(user => user.name === voter.name) === undefined ? this.addVoter(post, voter) : post)
-        this.posts = [...newPosts]
-
-        return this.posts.find(post => post.id === data.id)
+        if (voter) {
+            const post = this.posts.find(post => post.id === data.id)
+            if (post) {
+                const userVotedPosts = post.votes.find(u => u.name === data.voter.name)
+                if (!userVotedPosts) {
+                    const newPosts = this.posts.map(p => p.id === data.id ? this.addVoterToPost(p, voter) : p)
+                    this.posts = [...newPosts]
+                    return this.posts.find(p => p.id === data.id)
+                } else throw new UserInputError("User already voted")
+            } else throw new UserInputError("Post does not exist")
+        } else throw new AuthenticationError("User does not exist")
     }
 
     getVotes(postId) {
         return this.posts.find(post => post.id === postId).votes.length
     }
 
-    addVoter(post, voter) {
+    addVoterToPost(post, voter) {
         post.votes.push(voter)
         return post
     }
