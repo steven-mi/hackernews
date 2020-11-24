@@ -35,7 +35,6 @@ export class InMemoryDataSource extends DataSource {
         if (author) {
             const newPost = new Post({
                 title: data.post.title,
-                votes: [],
                 author: author
             })
             this.posts.push(newPost)
