@@ -49,7 +49,7 @@ describe('mutations', () => {
         const action = () => mutate({mutation: WRITE_POST, variables: {title: 'Some post', author: 'Alice'}})
         const WRITE_POST = gql`
             mutation($title: String!, $author: String!) {
-                write(post: { title: $title, author: { name: $author }}){title, id}
+                write(post: { title: $title, author: { name: $author }}){title, id, author {name}}
             }
         `
 
@@ -71,7 +71,10 @@ describe('mutations', () => {
                 .resolves
                 .toMatchObject({
                     errors: undefined,
-                    data: {write: {title: 'Some post', id: expect.any(String)}}
+                    data: {write: {title: 'Some post', 
+                                   id: expect.any(String),
+                                   author: {name: 'Alice'}
+                                  }}
                 })
         })
     })
