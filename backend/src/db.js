@@ -79,12 +79,15 @@ export class InMemoryDataSource extends DataSource {
         this.users = [
             new User({
                 name: "Alice",
+                email: "alice@test.de",
             }),
             new User({
                 name: "Bob",
+                email: "bob@test.de",
             }),
             new User({
                 name: "Hans",
+                email: "hans@test.de",
             })
         ];
         console.log("Initialize 3 dummyusers.")
