@@ -12,7 +12,9 @@ export const resolvers = {
     },
     Mutation: {
         write: (parent, args, context) => context.dataSources.db.createPost(args),
-        upvote: (parent, args, context) => context.dataSources.db.upvotePost(args)
+        upvote: (parent, args, context) => context.dataSources.db.upvotePost(args),
+        login: (parent, args, context) => context.dataSources.db.loginUser(args),
+        signup: (parent, args, context) => context.dataSources.db.signupUser(args),
     }
 
 };
