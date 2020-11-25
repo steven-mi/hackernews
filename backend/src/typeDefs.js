@@ -9,7 +9,9 @@ const typeDefs = gql `
   }
 
   type User {
-    name: ID!
+    id: ID!
+    name: String!
+    email: String!
     posts: [Post]
   }
 
@@ -27,11 +29,20 @@ const typeDefs = gql `
 
     # OPTIONAL
     # downvote(id: ID!, voter: UserInput!): Post
+
+    """
+    returns a signed JWT or null
+    """
+    login(email: String!, password: String!): String
+
+    """
+    returns a signed JWT or null
+    """
+    signup(name: String!, email: String!, password: String!): String
   }
 
   input PostInput {
     title: String!
-    author: UserInput!
   }
 
   input UserInput {
