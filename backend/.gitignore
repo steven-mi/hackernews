@@ -12,3 +12,5 @@
 /denoDist
 /npm
 /deno
+
+.env
