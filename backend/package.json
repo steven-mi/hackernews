@@ -2,11 +2,11 @@
     "name": "backend",
     "version": "1.0.0",
     "description": "",
-    "main": "src/index.js",
+    "main": "index.js",
     "scripts": {
         "test": "jest",
         "lint": "eslint . --ext .js --color",
-        "serve": "nodemon -r esm src/index.js"
+        "serve": "nodemon -r esm index.js"
     },
     "keywords": [],
     "author": "",
@@ -16,8 +16,11 @@
         "@babel/preset-env": "^7.12.1",
         "apollo-server": "^2.19.0",
         "babel-jest": "^26.6.3",
+        "bcrypt": "^5.0.0",
+        "dotenv": "^8.2.0",
         "esm": "^3.2.25",
-        "graphql": "^15.4.0"
+        "graphql": "^15.4.0",
+        "jsonwebtoken": "^8.5.1"
     },
     "devDependencies": {
         "apollo-server-testing": "^2.19.0",
