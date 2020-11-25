@@ -1,11 +1,13 @@
 import {DataSource} from 'apollo-datasource'
 import crypto from 'crypto'
 import {AuthenticationError, UserInputError} from "apollo-server-errors";
+import bcrypt from 'bcrypt'
+import jsonwebtoken from 'jsonwebtoken'
 
 export class Post {
     constructor(data) {
         this.id = crypto.randomBytes(16).toString('hex')
-        this.votes = [],
+        this.votes = []
         Object.assign(this, data)
     }
 }
@@ -27,6 +29,52 @@ export class InMemoryDataSource extends DataSource {
     }
 
     initialize(...args) {
+    }
+
+    async loginUser({email, password}) {
+        const user = this.users.find(user => user.email === email)
+        if (!user) {
+            throw new UserInputError("No user with that email")
+        }
+
+        const valid = await bcrypt.compare(password, user.password)
+        if (!valid) {
+            throw new AuthenticationError('Incorrect password')
+        }
+        return jsonwebtoken.sign(
+            {id: user.id},
+            process.env.JWT_SECRET,
+            {expiresIn: '1d'}
+        )
+    }
+
+    async signupUser({name, email, password}) {
+        if (!this.isValidPassword(password)) {
+            throw new UserInputError("Password must have at least 8 characters")
+        }
+        if (this.isEmailTaken(email)) {
+            throw new UserInputError("Email is already taken")
+        }
+
+        const user = await new User({
+            name,
+            email,
+            password: await bcrypt.hash(password, 10)
+        })
+        this.users.push(user)
+        return jsonwebtoken.sign(
+            {id: user.id},
+            process.env.JWT_SECRET,
+            {expiresIn: '1y'}
+        )
+    }
+
+    isEmailTaken(email) {
+        return this.users.find(user => user.email === email)
+    }
+
+    isValidPassword(password) {
+        return password.length >= 8
     }
 
     createPost(data) {
@@ -69,10 +117,6 @@ export class InMemoryDataSource extends DataSource {
         return post
     }
 
-    addPostToAuthor(post, author) {
-        author.posts.push(post)
-        return author
-    }
 
     // Init with dummydata
     initDummyUsers() {
@@ -90,7 +134,6 @@ export class InMemoryDataSource extends DataSource {
                 email: "hans@test.de",
             })
         ];
-        console.log("Initialize 3 dummyusers.")
     }
 
     initDummyPosts() {
@@ -108,6 +151,5 @@ export class InMemoryDataSource extends DataSource {
                 author: this.users[1],
             })
         ]
-        console.log("Initialize 3 dummyposts.")
     }
 }
