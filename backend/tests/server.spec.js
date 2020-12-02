@@ -262,19 +262,48 @@ describe('TEST AUTHENTICATION HEADER', () => {
     })
 
     describe('MUTATE UPVOTE POST', () => {
-        const action = () => mutate({mutation: UPVOTE_POST, variables: {id: userPost.id}})
-        it('responds with new post', async () => {
-            await expect(action())
-                .resolves
-                .toMatchObject({
-                    data: {
-                        upvote: {
-                            id: userPost.id,
-                            votes: 1
+
+        describe('post once', () => {
+
+            const action = () => mutate({mutation: UPVOTE_POST, variables: {id: userPost.id}})
+            it('responds with new post', async () => {
+                await expect(action())
+                    .resolves
+                    .toMatchObject({
+                        data: {
+                            upvote: {
+                                id: userPost.id,
+                                votes: 1
+                            }
                         }
-                    }
-                })
+                    })
+            })
+        })
+
+        describe('post twice', () => {
+
+            const action = () => mutate({mutation: UPVOTE_POST, variables: {id: userPost.id}})
+            it('responds with new post', async () => {
+                await action()
+                await expect(action())
+                    .resolves
+                    .toMatchObject({
+                        errors: [Error("User already voted")],
+                    })
+            })
+        })
+
+        describe('post not exist', () => {
+
+            const action = () => mutate({mutation: UPVOTE_POST, variables: {id: "1231231241232"}})
+            it('responds with error message', async () => {
+                await action()
+                await expect(action())
+                    .resolves
+                    .toMatchObject({
+                        errors: [Error("Post does not exist")],
+                    })
+            })
         })
     })
-
 })
