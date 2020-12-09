@@ -1,11 +1,12 @@
 import {DataSource} from 'apollo-datasource'
 import crypto from 'crypto'
-import {AuthenticationError, UserInputError} from "apollo-server-errors";
+import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
 
 export class Post {
     constructor(data) {
         this.id = crypto.randomBytes(16).toString('hex')
-        this.votes = [],
+        this.votes = []
         Object.assign(this, data)
     }
 }
@@ -18,46 +19,84 @@ export class User {
 }
 
 export class InMemoryDataSource extends DataSource {
-    constructor() {
+    constructor(posts = [], users = [], secret = "changeme", saltRounds = 10) {
         super()
-        this.posts = []
-        this.users = []
-        this.initDummyUsers()
-        this.initDummyPosts()
+        this.secret = secret
+        this.posts = posts
+        this.users = users
+        this.salt = bcrypt.genSaltSync(saltRounds)
     }
 
     initialize(...args) {
     }
 
-    createPost(data) {
-        const author = this.users.find(user => user.name === data.post.author.name)
+    loginUser(data) {
+        const user = this.users.find(u => u.email === data.email
+            && bcrypt.compareSync(data.password, u.password))
+        if (user === undefined) return new Error("Email or password is wrong")
 
-        if (author) {
-            const newPost = new Post({
-                title: data.post.title,
-                author: author
-            })
-            this.posts.push(newPost)
+        return jwt.sign(
+            {id: user.id},
+            this.secret)
 
-            return newPost
-        } else {
-            throw new AuthenticationError("User does not exist");
+    }
+
+    signupUser(data) {
+        if (data.password.length < 8) return new Error("Password must have at least 8 characters")
+
+        const user = this.users.find(u => u.email === data.email)
+        if (user !== undefined) return new Error("Email already exist")
+
+
+        const encryptedPassword = bcrypt.hashSync(data.password, this.salt)
+        const newUser = new User({
+            name: data.name,
+            email: data.email,
+            password: encryptedPassword,
+        })
+        this.users.push(newUser)
+
+        return jwt.sign(
+            {id: newUser.id},
+            this.secret)
+    }
+
+    verifyToken(token) {
+        try {
+            return jwt.verify(token, this.secret)
+        } catch (err) {
+            return undefined
         }
     }
 
-    upvotePost(data) {
-        const voter = this.users.find(user => user.name === data.voter.name)
-        if (voter) {
-            const post = this.posts.find(post => post.id === data.id)
-            if (post) {
-                const userVotedPosts = post.votes.find(u => u.name === data.voter.name)
-                if (!userVotedPosts) {
-                    const newPosts = this.posts.map(p => p.id === data.id ? this.addVoterToPost(p, voter) : p)
-                    this.posts = [...newPosts]
-                    return this.posts.find(p => p.id === data.id)
-                } else throw new UserInputError("User already voted")
-            } else throw new UserInputError("Post does not exist")
-        } else throw new AuthenticationError("User does not exist")
+    createPost(data, context) {
+        const author = this.users.find(user => user.id === context.user.id)
+        if (author === undefined) return new Error("User does not exist")
+
+        const newPost = new Post({
+            title: data.post.title,
+            author: author
+        })
+        this.posts.push(newPost)
+
+        return newPost
+    }
+
+    upvotePost(data, context) {
+        const voter = this.users.find(user => user.id === context.user.id)
+        if (voter === undefined) return new Error("User does not exist")
+
+        const post = this.posts.find(post => post.id === data.id)
+        if (post === undefined) return new Error("Post does not exist")
+
+        const userVotedPosts = post.votes.find(u => u.id === voter.id)
+        if (userVotedPosts !== undefined) {
+            return new Error("User already voted")
+        } else {
+            const newPosts = this.posts.map(p => p.id === data.id ? this.addVoterToPost(p, voter) : p)
+            this.posts = [...newPosts]
+            return this.posts.find(p => p.id === data.id)
+        }
     }
 
     getVotes(postId) {
@@ -67,44 +106,5 @@ export class InMemoryDataSource extends DataSource {
     addVoterToPost(post, voter) {
         post.votes.push(voter)
         return post
-    }
-
-    addPostToAuthor(post, author) {
-        author.posts.push(post)
-        return author
-    }
-
-    // Init with dummydata
-    initDummyUsers() {
-        this.users = [
-            new User({
-                name: "Alice",
-            }),
-            new User({
-                name: "Bob",
-            }),
-            new User({
-                name: "Hans",
-            })
-        ];
-        console.log("Initialize 3 dummyusers.")
-    }
-
-    initDummyPosts() {
-        this.posts = [
-            new Post({
-                title: "post 1",
-                author: this.users[0],
-            }),
-            new Post({
-                title: "post 2",
-                author: this.users[0],
-            }),
-            new Post({
-                title: "post 3",
-                author: this.users[1],
-            })
-        ]
-        console.log("Initialize 3 dummyposts.")
     }
 }

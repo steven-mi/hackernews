@@ -1,4 +1,4 @@
-export const resolvers = {
+const resolvers = {
     Query: {
         posts: (parent, args, context) => context.dataSources.db.posts,
         users: (parent, args, context) => context.dataSources.db.users,
@@ -11,8 +11,11 @@ export const resolvers = {
         votes: (parent, args, context) => context.dataSources.db.getVotes(parent.id)
     },
     Mutation: {
-        write: (parent, args, context) => context.dataSources.db.createPost(args),
-        upvote: (parent, args, context) => context.dataSources.db.upvotePost(args)
+        write: (parent, args, context) => context.dataSources.db.createPost(args, context),
+        upvote: (parent, args, context) => context.dataSources.db.upvotePost(args, context),
+        login: (parent, args, context) => context.dataSources.db.loginUser(args),
+        signup: (parent, args, context) => context.dataSources.db.signupUser(args)
     }
+}
 
-};
+export default resolvers

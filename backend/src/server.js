@@ -1,12 +1,20 @@
-import { ApolloServer, gql } from "apollo-server"
+import {ApolloServer} from 'apollo-server'
 import typeDefs from './typeDefs'
-import { Post, InMemoryDataSource } from './db'
-import { resolvers } from './resolvers'
+import resolvers from "./resolvers";
+import {InMemoryDataSource} from "./db";
+import {applyMiddleware,} from "graphql-middleware";
+import permissions from "./permissions";
+import {makeExecutableSchema} from 'apollo-server';
+
 
 const db = new InMemoryDataSource()
+const dataSources = () => ({db})
+const context = ({req, res}) => {
+    const token = req.headers.authorization || ''
+    return {user: db.verifyToken(token)}
+}
 
-const dataSources = () => ({ db })
-const context = ({ req, res }) => ({ req, res })
+const schema = applyMiddleware(makeExecutableSchema({typeDefs, resolvers}), permissions)
 
 export default class Server {
     constructor(opts) {
@@ -14,8 +22,9 @@ export default class Server {
             typeDefs,
             resolvers,
             dataSources,
-            context
+            context,
+            schema
         }
-        return new ApolloServer({...defaults, ...opts })
+        return new ApolloServer({...defaults, ...opts})
     }
 }
