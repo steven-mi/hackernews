@@ -1,8 +1,6 @@
 import dotenv from 'dotenv-override'
 
 dotenv.config({path: process.env.NODE_ENV === "test" ? ".env.test" : ".env"});
-console.log(process.env)
-console.log({path: process.env.NODE_ENV === "test" ? ".env.test" : ".env"})
 export const {JWT_SECRET, NEO4J_USERNAME, NEO4J_PASSWORD, NEO4J_HOST} = process.env;
 if (!(JWT_SECRET && NEO4J_USERNAME && NEO4J_PASSWORD)) {
     throw new Error(`
