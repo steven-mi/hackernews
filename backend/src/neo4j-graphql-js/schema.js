@@ -1,7 +1,7 @@
 import { makeAugmentedSchema } from 'neo4j-graphql-js';
 import { gql } from 'apollo-server';
 
-const typeDefs = gql`
+const typeDefs = gql `
     type User {
         id: ID!
         name: String!
@@ -16,5 +16,5 @@ const typeDefs = gql`
     }
 `;
 
-const schema = makeAugmentedSchema({ typeDefs});
+const schema = makeAugmentedSchema({ typeDefs, config: { query: true, mutation: false } });
 export default schema;
