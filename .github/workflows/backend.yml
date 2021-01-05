@@ -26,7 +26,7 @@ jobs:
           - 7687:7687
         options:
           --name neo4j
-          --env-file .env.test
+          --env-file ./backend/.env.test
     steps:
     - uses: actions/checkout@v2
     - name: Use Node.js ${{ matrix.node-version }}
