@@ -1,14 +1,17 @@
-import {rule, shield} from "graphql-shield"
+import {allow, rule, shield} from "graphql-shield"
 
 
 const isAuthenticated = rule()((parent, args, context) => {
-    return !!context.user
+    return !!context.auth
 });
 
 const permissions = shield({
     Mutation: {
         write: isAuthenticated,
         upvote: isAuthenticated
-    }
+    },
+},
+{
+    fallbackRule: allow,
 });
 export default permissions

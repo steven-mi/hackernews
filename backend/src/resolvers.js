@@ -1,21 +1,88 @@
-const resolvers = {
+import {delegateToSchema} from '@graphql-tools/delegate';
+import User from './db/entities/User';
+import Post from './db/entities/Post';
+import {neo4jgraphql} from "neo4j-graphql-js";
+
+export default ({subschema}) => ({
     Query: {
-        posts: (parent, args, context) => context.dataSources.db.posts,
-        users: (parent, args, context) => context.dataSources.db.users,
-    },
-    User: {
-        posts: (parent, args, context) =>
-            context.dataSources.db.posts.filter((post) => post.author.name === parent.name)
-    },
-    Post: {
-        votes: (parent, args, context) => context.dataSources.db.getVotes(parent.id)
+        users: async (parent, args, context, resolveInfo) => {
+            return neo4jgraphql(parent, args, context, resolveInfo);
+        },
+        posts: async (parent, args, context, resolveInfo) => {
+            return neo4jgraphql(parent, args, context, resolveInfo);
+        },
     },
     Mutation: {
-        write: (parent, args, context) => context.dataSources.db.createPost(args, context),
-        upvote: (parent, args, context) => context.dataSources.db.upvotePost(args, context),
-        login: (parent, args, context) => context.dataSources.db.loginUser(args),
-        signup: (parent, args, context) => context.dataSources.db.signupUser(args)
-    }
-}
+        login: async (_parent, {email, password}, {jwtSign}) => {
+            const user = await User.first({email});
+            if (user && user.checkPassword(password)) {
+                return jwtSign({person: {id: user.id}});
+            }
+            return new Error("Email or password is wrong")
+        },
+        signup: async (_parent, {name, email, password}, {jwtSign}) => {
+            const existingPerson = await User.first({email});
+            if (existingPerson) return new Error("Email already exist")
+            if (password.length < 8) return new Error("Password must have at least 8 characters")
 
-export default resolvers
+            const person = new User({name, email, password});
+            await person.save();
+            return jwtSign({person: {id: person.id}});
+        },
+        write: async (_parent, {post: {title}}, context, info) => {
+            let currentUser = await User.first(context.person);
+            if (!currentUser)
+                return new Error("User does not exist")
+            const post = new Post({title: title, author: currentUser});
+            await post.save();
+            const [resolvedPost] = await delegateToSchema({
+                schema: subschema,
+                operation: "query",
+                fieldName: "Post",
+                args: {id: post.id},
+                context,
+                info,
+            });
+            return resolvedPost;
+        },
+        upvote: async (_parent, args, context, info) => {
+            const user = await User.first(context.person);
+            if (!user && !user.checkPassword(password)) return new Error("User does not exist")
+
+            let post = await Post.first({id: args.id});
+            if (!post) return new Error("Post does not exist")
+            const [resolvedPostBefore] = await delegateToSchema({
+                schema: subschema,
+                operation: "query",
+                fieldName: "Post",
+                args: {id: post.id},
+                context,
+                info,
+            });
+
+            await post.upvote(user);
+            const [resolvedPost] = await delegateToSchema({
+                schema: subschema,
+                operation: "query",
+                fieldName: "Post",
+                args: {id: post.id},
+                context,
+                info,
+            });
+
+            if (resolvedPost.voters.length === resolvedPostBefore.voters.length){
+                return new Error("User already voted")
+            }
+
+            return resolvedPost;
+        },
+    },
+    Post: {
+        votes: {
+            selectionSet: "{ voters { id } }",
+            resolve: (post) => {
+                return post.voters ? post.voters.length : 0;
+            },
+        },
+    }
+});

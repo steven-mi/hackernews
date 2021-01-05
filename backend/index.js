@@ -1,3 +1,4 @@
+/*
 import Server from './src/server'
 import dotenv from 'dotenv'
 import {InMemoryDataSource, Post, User} from "./src/db";
@@ -34,7 +35,7 @@ const posts = [
     })
 ]
 
-const token = process.env.TOKEN
+const token = process.env.JWT_SECRET
 
 const playground = {
     settings: {
@@ -49,3 +50,19 @@ const server = new Server({
 server.listen().then(({url}) => {
     console.log(`🚀  Server ready at ${url}`);
 });
+*/
+import {ApolloServer} from 'apollo-server';
+import Server from './src/server';
+
+const playground = {
+    settings: {
+        'schema.polling.enable': false
+    }
+};
+
+(async () => {
+    const server = await Server(ApolloServer, {playground});
+    const {url} = await server.listen();
+    // eslint-disable-next-line no-console
+    console.log(`🚀  Server ready at ${url}`);
+})();

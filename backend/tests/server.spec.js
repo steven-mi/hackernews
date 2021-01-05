@@ -1,45 +1,61 @@
-import {createTestClient} from 'apollo-server-testing'
-import Server from '../src/server.js'
-import {InMemoryDataSource, Post, User} from '../src/db.js'
+import {createTestClient} from 'apollo-server-testing';
+import {ApolloServer} from 'apollo-server';
+import Server from '../src/server';
+import actualContext from '../src/context';
+import neode from '../src/db/neode';
+import User from '../src/db/entities/User';
+import Post from '../src/db/entities/Post';
+
 import {LOGIN_USER, POSTS, SIGNUP_USER, UPVOTE_POST, USERS, WRITE_POST} from "./server.spec.queries";
 
-const users = [
-    new User({
-        name: "Alice",
-        email: "alice@test.de",
-    }),
-    new User({
-        name: "Bob",
-        email: "bob@test.de",
-    }),
-];
 
-const posts = [
-    new Post({
-        title: "post 1",
-        author: users[0],
-    }),
-    new Post({
-        title: "post 2",
-        author: users[0],
-    }),
-    new Post({
-        title: "post 3",
-        author: users[1],
-    })
-]
+let query;
+let mutate;
+let reqMock;
+const context = () => actualContext({req: reqMock});
+const alice = new User({
+    name: 'Alice',
+    email: 'alice@example.org',
+    password: '1234'
+});
+const bob = new User({
+    name: 'Bob',
+    email: 'bob@example.org',
+    password: '4321'
+});
 
-let db = new InMemoryDataSource(posts, users)
-let server = new Server({
-    dataSources: () => ({db}),
-    context: ({req, res}) => (req, res)
-})
-let {query, mutate} = createTestClient(server)
+const bobsPost = new Post({title: "bobsPost", author: bob})
+
+const cleanDatabase = async () => {
+    const {driver} = context();
+    await driver
+        .session()
+        .writeTransaction(txc => txc.run('MATCH(n) DETACH DELETE n;'));
+};
+
+beforeEach(async () => {
+    reqMock = {headers: {authorization: ""}};
+
+    await cleanDatabase();
+    const server = await Server(ApolloServer, {context});
+    const testClient = createTestClient(server);
+    ({query, mutate} = testClient);
+});
+
+afterAll(async () => {
+    await cleanDatabase();
+    const {driver} = context();
+    driver.close();
+    neode.driver.close();
+});
 
 describe('TEST WITHOUT AUTHENTICATION HEADER', () => {
 
     beforeEach(async () => {
-        db = new InMemoryDataSource(posts, users)
+        reqMock = {headers: {authorization: ""}};
+        await alice.save()
+        await bob.save()
+        await bobsPost.save()
     })
 
     describe('QUERY POSTS', () => {
@@ -49,9 +65,7 @@ describe('TEST WITHOUT AUTHENTICATION HEADER', () => {
                 .toMatchObject({
                     errors: undefined,
                     data: {
-                        posts: [{title: posts[0].title, id: expect.any(String)},
-                            {title: posts[1].title, id: expect.any(String)},
-                            {title: posts[2].title, id: expect.any(String)}]
+                        posts: [{title: bobsPost.title, id: expect.any(String)}]
                     }
                 })
         })
@@ -64,8 +78,8 @@ describe('TEST WITHOUT AUTHENTICATION HEADER', () => {
                 .toMatchObject({
                     errors: undefined,
                     data: {
-                        users: [{name: users[0].name, email: users[0].email, id: expect.any(String)},
-                            {name: users[1].name, email: users[1].email, id: expect.any(String)}]
+                        users: [{name: expect.any(String), email: expect.any(String), id: expect.any(String)},
+                            {name: expect.any(String), email: expect.any(String), id: expect.any(String)}]
                     }
                 })
         })
@@ -83,7 +97,7 @@ describe('TEST WITHOUT AUTHENTICATION HEADER', () => {
     })
 
     describe('MUTATE UPVOTE POST', () => {
-        const action = () => mutate({mutation: UPVOTE_POST, variables: {id: db.posts[0].id}})
+        const action = () => mutate({mutation: UPVOTE_POST, variables: {id: bobsPost.id}})
         it('responds with error message', async () => {
             await expect(action())
                 .resolves
@@ -115,7 +129,7 @@ describe('TEST WITHOUT AUTHENTICATION HEADER', () => {
         describe('signup with existing e-mail', () => {
             const action = () => mutate({
                 mutation: SIGNUP_USER,
-                variables: {name: 'Hans', password: "123456789", email: "alice@test.de"}
+                variables: {...alice}
             })
             it('responds with error', async () => {
                 await expect(action())
@@ -214,37 +228,30 @@ describe('TEST WITHOUT AUTHENTICATION HEADER', () => {
 })
 
 
-describe('TEST AUTHENTICATION HEADER', () => {
-    let userPost
+describe('TEST WITH AUTHENTICATION HEADER', () => {
+    let token
     beforeEach(async () => {
-        db = new InMemoryDataSource()
+        await alice.save()
+        await bob.save()
+        await bobsPost.save()
 
-        const userData = {name: 'Hans', password: "123456789", email: "hanshans"}
-        const action = () => mutate({
-            mutation: SIGNUP_USER,
-            variables: userData
+        const login_action = () => mutate({
+            mutation: LOGIN_USER,
+            variables: {...alice}
         })
-        db.posts.push(new Post({
-            title: "Hans new post",
-            author: new User(userData)
-        }))
+        const loginData = await login_action()
+        token = loginData.data.login
+        reqMock = {headers: {authorization: token}};
 
-        userPost = db.posts[0]
-        const result = await action()
-        server = new Server({
-            dataSources: () => ({db}),
-            context: ({req, res}) => {
-                return {user: db.verifyToken(result.data.signup)}
-            }
-        })
-        const client = createTestClient(server)
-        query = client.query
-        mutate = client.mutate
     })
 
 
     describe('MUTATE WRITE POST', () => {
-        const action = () => mutate({mutation: WRITE_POST, variables: {title: 'New Post'}})
+        const action = () => mutate({
+            mutation: WRITE_POST,
+            variables: {title: 'New Post'}
+        })
+
         it('responds with new post', async () => {
             await expect(action())
                 .resolves
@@ -253,7 +260,7 @@ describe('TEST AUTHENTICATION HEADER', () => {
                         write: {
                             title: 'New Post',
                             author: {
-                                name: 'Hans'
+                                name: alice.name
                             }
                         }
                     }
@@ -265,14 +272,17 @@ describe('TEST AUTHENTICATION HEADER', () => {
 
         describe('post once', () => {
 
-            const action = () => mutate({mutation: UPVOTE_POST, variables: {id: userPost.id}})
+            const action = () => mutate({
+                mutation: UPVOTE_POST,
+                variables: {id: bobsPost.id}
+            })
             it('responds with new post', async () => {
                 await expect(action())
                     .resolves
                     .toMatchObject({
                         data: {
                             upvote: {
-                                id: userPost.id,
+                                id: bobsPost.id,
                                 votes: 1
                             }
                         }
@@ -282,7 +292,10 @@ describe('TEST AUTHENTICATION HEADER', () => {
 
         describe('post twice', () => {
 
-            const action = () => mutate({mutation: UPVOTE_POST, variables: {id: userPost.id}})
+            const action = () => mutate({
+                mutation: UPVOTE_POST,
+                variables: {id: bobsPost.id}
+            })
             it('responds with new post', async () => {
                 await action()
                 await expect(action())
@@ -295,7 +308,10 @@ describe('TEST AUTHENTICATION HEADER', () => {
 
         describe('post not exist', () => {
 
-            const action = () => mutate({mutation: UPVOTE_POST, variables: {id: "1231231241232"}})
+            const action = () => mutate({
+                mutation: UPVOTE_POST,
+                variables: {id: "1231231241232"}
+            });
             it('responds with error message', async () => {
                 await action()
                 await expect(action())
