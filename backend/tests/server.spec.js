@@ -8,7 +8,6 @@ import Post from '../src/db/entities/Post';
 
 import {LOGIN_USER, POSTS, SIGNUP_USER, UPVOTE_POST, USERS, WRITE_POST} from "./server.spec.queries";
 
-
 let query;
 let mutate;
 let reqMock;
