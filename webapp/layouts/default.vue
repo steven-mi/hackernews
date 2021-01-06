@@ -1,10 +1,69 @@
 <template>
   <div>
-    <Nuxt />
+    <nav>
+      <div class="logo">
+        <NuxtLink to="/">
+          <Logo />
+          news
+        </NuxtLink>
+      </div>
+      <div class="option">
+        <NuxtLink to="/login">Login</NuxtLink>
+      </div>
+      <div class="option">
+        <a>Logout</a>
+      </div>
+    </nav>
+    <main>
+      <Nuxt />
+    </main>
   </div>
 </template>
 
 <style>
+.logo {
+  float: left;
+  padding-left: 2rem;
+}
+.option {
+  float: right;
+  padding-right: 2rem;
+}
+nav {
+  font-size: 1.8rem;
+  padding-top: 2rem;
+}
+
+/* home route and active route will show in bold as it matches / and /about */
+a.nuxt-link-active {
+  font-weight: bold;
+}
+/* exact link will show the primary color for only the exact matching link */
+a.nuxt-link-exact-active {
+  color: #00c58e;
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
+    Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji,
+    Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+  margin: 0;
+}
+
+img {
+  margin-bottom: 1rem;
+}
+
+a,
+a:visited {
+  text-decoration: none;
+  color: inherit;
+}
+
+a:hover {
+  color: #00c58e;
+}
+
 html {
   font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI',
     Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -24,32 +83,11 @@ html {
   margin: 0;
 }
 
-.button--green {
-  display: inline-block;
-  border-radius: 4px;
-  border: 1px solid #3b8070;
-  color: #3b8070;
-  text-decoration: none;
-  padding: 10px 30px;
-}
-
-.button--green:hover {
-  color: #fff;
-  background-color: #3b8070;
-}
-
-.button--grey {
-  display: inline-block;
-  border-radius: 4px;
-  border: 1px solid #35495e;
-  color: #35495e;
-  text-decoration: none;
-  padding: 10px 30px;
-  margin-left: 15px;
-}
-
-.button--grey:hover {
-  color: #fff;
-  background-color: #35495e;
+main {
+  margin: 0 auto;
+  padding: 0 1rem;
+  margin-top: 100px;
+  max-width: 1280px;
+  text-align: center;
 }
 </style>

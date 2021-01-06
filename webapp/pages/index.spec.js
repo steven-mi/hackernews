@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import App from './App'
+import App from './index'
 
 describe('Given a non empty list of items and descending order', () => {
   let wrapper

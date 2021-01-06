@@ -29,8 +29,21 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/pwa
     '@nuxtjs/pwa',
+    '@nuxtjs/apollo',
   ],
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {},
+
+  storybook: {
+    // Options
+  },
+
+  apollo: {
+    clientConfigs: {
+      default: {
+        httpEndpoint: 'http://localhost:4000',
+      },
+    },
+  },
 }

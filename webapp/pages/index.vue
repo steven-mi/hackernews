@@ -1,67 +1,72 @@
 <template>
-  <div class="container">
-    <div>
-      <Logo />
-      <h1 class="title">hackernews</h1>
-      <App />
-      <div class="links">
-        <a
-          href="https://nuxtjs.org/"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="button--green"
-        >
-          Documentation
-        </a>
-        <a
-          href="https://github.com/nuxt/nuxt.js"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="button--grey"
-        >
-          GitHub
-        </a>
-      </div>
-    </div>
+  <div id="container">
+    <h1>News List</h1>
+    <List
+      :list-items="sortedNews"
+      @delete-item="deleteItem($event)"
+      @update-item="updateItem"
+      @sort-item="descending = !descending"
+    ></List>
+    <BasicInput @create-item="createItem($event)"></BasicInput>
   </div>
 </template>
 
 <script>
-import App from '~/components/App/App'
+import List from '~/components/List/List'
+import BasicInput from '~/components/BasicInput/BasicInput'
+import posts from '~/apollo/queries/posts.graphql'
+
 export default {
-  components: { App },
+  components: {
+    List,
+    BasicInput,
+  },
+  apollo: {
+    posts: {
+      prefetch: true,
+      query: posts,
+    },
+  },
+  data() {
+    return {
+      counter: 3,
+      descending: true,
+    }
+  },
+  computed: {
+    sortedNews() {
+      if (this.descending) {
+        return [...this.posts].sort((a, b) =>
+          a.votes < b.votes ? 1 : b.votes < a.votes ? -1 : 0
+        )
+      } else {
+        return [...this.posts].sort((a, b) =>
+          a.votes > b.votes ? 1 : b.votes > a.votes ? -1 : 0
+        )
+      }
+    },
+  },
+  methods: {
+    createItem(newTitle) {
+      this.posts.push({
+        id: this.counter++,
+        title: newTitle,
+        votes: 0,
+      })
+    },
+    deleteItem(item) {
+      this.posts = this.posts.filter((el) => el.id !== item.id)
+    },
+    updateItem(item) {
+      this.posts = this.posts.map((el) => {
+        if (el.id === item.id) {
+          return item
+        }
+        return el
+      })
+    },
+  },
 }
 </script>
 
-<style>
-.container {
-  margin: 0 auto;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
-.title {
-  font-family: 'Quicksand', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,
-    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  display: block;
-  font-weight: 300;
-  font-size: 100px;
-  color: #35495e;
-  letter-spacing: 1px;
-}
-
-.subtitle {
-  font-weight: 300;
-  font-size: 42px;
-  color: #526488;
-  word-spacing: 5px;
-  padding-bottom: 15px;
-}
-
-.links {
-  padding-top: 15px;
-}
-</style>
+<style></style>
