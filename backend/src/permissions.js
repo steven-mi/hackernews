@@ -10,8 +10,5 @@ const permissions = shield({
         write: isAuthenticated,
         upvote: isAuthenticated
     },
-},
-{
-    fallbackRule: allow,
 });
 export default permissions
