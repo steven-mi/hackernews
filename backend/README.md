@@ -1,13 +1,20 @@
 # backend
 
 ## Project setup
+Install packages:
 ```
 npm install
 ```
 
+Add .env with:
 ```
-touch .env
-echo JWT_SECRET=lallalala > .env
+JWT_SECRET=lallalala
+NEO4J_USERNAME=neo4j
+NEO4J_PASSWORD=test123
+NEO4J_PROTOCOL=neo4j
+NEO4J_HOST=localhost
+NEO4J_DATABASE=neo4j
+NEO4J_ENCRYPTION=ENCRYPTION_OFF
 ```
 
 ### Compiles and hot-reloads for development
