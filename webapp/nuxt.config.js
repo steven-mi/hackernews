@@ -46,4 +46,15 @@ export default {
       },
     },
   },
+
+  pwa: {
+    manifest: {
+      name: `hackernews`,
+      short_name: `HN`,
+      description: `A news site for hackers, by hackers`,
+      lang: 'en',
+      theme_color: '#00C58E',
+      background_color: '#000',
+    },
+  },
 }
