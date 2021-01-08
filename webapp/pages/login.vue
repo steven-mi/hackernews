@@ -23,7 +23,10 @@ export default {
             password,
           },
         })
-        this.$store.commit('auth/set', response.data.login)
+        this.$store.commit('auth/set', {
+          token: response.data.login,
+          email,
+        })
         await this.$router.push('/')
       } catch (error) {
         // eslint-disable-next-line no-console

@@ -3,7 +3,7 @@
     <h2>{{ item.title }} - ({{ item.votes }})</h2>
     <button v-if="isAuthenticated" @click="upvoteItem()">Upvote</button>
     <button v-if="isAuthenticated" @click="downvoteItem()">Downvote</button>
-    <button v-if="isAuthenticated" @click="$emit('delete-item', item)">
+    <button v-if="item.isOwner" @click="$emit('delete-item', item)">
       Remove
     </button>
     <br />
@@ -13,6 +13,7 @@
 <script>
 export default {
   name: 'ListItem',
+  // eslint-disable-next-line vue/require-prop-types
   props: ['item', 'isAuthenticated'],
   methods: {
     upvoteItem() {

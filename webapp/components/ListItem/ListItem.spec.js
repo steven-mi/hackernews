@@ -6,7 +6,8 @@ describe('Given a item', () => {
   beforeEach(() => {
     wrapper = mount(ListItem, {
       propsData: {
-        item: { id: '1', title: 'Foo', votes: 0 },
+        item: { id: '1', title: 'Foo', votes: 0, isOwner: true },
+        isAuthenticated: true,
       },
     })
   })

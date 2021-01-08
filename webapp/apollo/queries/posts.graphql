@@ -3,5 +3,12 @@ query {
     id
     title
     votes
+    voters{
+      id
+      email
+    }
+    author{
+      email
+    }
   }
 }

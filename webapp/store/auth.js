@@ -1,13 +1,14 @@
 const getDefaultState = () => ({
   token: '',
+  email: '',
 })
 
 const state = getDefaultState()
 
 export const mutations = {
-  set(state, token) {
+  set(state, { token, email }) {
     state.token = token
-    localStorage.setItem('token', token)
+    state.email = email
   },
   reset(state) {
     Object.assign(state, getDefaultState())

@@ -13,7 +13,7 @@ import signup from '~/apollo/mutations/signup.graphql'
 export default {
   components: { SignupForm },
   methods: {
-    async signup({ email, password, name }) {
+    async signup({ name, email, password }) {
       try {
         const response = await this.$apollo.mutate({
           mutation: signup,
@@ -24,7 +24,10 @@ export default {
             password,
           },
         })
-        this.$store.commit('auth/set', response.data.login)
+        this.$store.commit('auth/set', {
+          token: response.data.signup,
+          email,
+        })
         await this.$router.push('/')
       } catch (error) {
         // eslint-disable-next-line no-console

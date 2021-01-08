@@ -23,6 +23,7 @@ export default {
   components: {
     ListItem,
   },
+  // eslint-disable-next-line vue/require-prop-types
   props: ['listItems', 'isAuthenticated'],
 }
 </script>

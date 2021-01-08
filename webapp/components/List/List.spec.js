@@ -50,6 +50,7 @@ describe('Given a non empty list of items', () => {
     expect(wrapper.text()).toContain('post 3')
   })
   it('does not render empty state', () => {
+    // eslint-disable-next-line no-unused-expressions
     !expect(wrapper.text()).not.toContain('The list is empty :(')
   })
   describe('when pressing sort button', () => {

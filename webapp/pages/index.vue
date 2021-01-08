@@ -16,9 +16,9 @@
 </template>
 
 <script>
-import posts from '@/apollo/queries/posts.graphql'
-import write from '@/apollo/mutations/write.graphql'
-import upvote from '@/apollo/mutations/upvote.graphql'
+import posts from '~/apollo/queries/posts.graphql'
+import write from '~/apollo/mutations/write.graphql'
+import upvote from '~/apollo/mutations/upvote.graphql'
 import BasicInput from '~/components/BasicInput/BasicInput'
 import List from '~/components/List/List'
 
@@ -26,6 +26,26 @@ export default {
   components: {
     List,
     BasicInput,
+  },
+  async fetch() {
+    try {
+      const response = await this.$apollo.query({
+        query: posts,
+        fetchPolicy: 'no-cache',
+      })
+      let data = response.data.posts
+      if (this.$store.state.auth.email) {
+        data = data.map((p) => {
+          return {
+            ...p,
+            ...{ isOwner: p.author.email === this.$store.state.auth.email },
+          }
+        })
+      }
+      this.news = data
+    } catch {
+      this.news = []
+    }
   },
   data() {
     return {
@@ -50,26 +70,6 @@ export default {
       }
     },
   },
-  async beforeCreate() {
-    try {
-      const response = await this.$apollo.query({
-        query: posts,
-      })
-      this.news = response.data.posts
-    } catch {
-      this.news = []
-    }
-  },
-  async updated() {
-    try {
-      const response = await this.$apollo.query({
-        query: posts,
-      })
-      this.news = response.data.posts
-    } catch {
-      this.news = []
-    }
-  },
   methods: {
     async createItem(title) {
       try {
@@ -85,7 +85,9 @@ export default {
             },
           },
         })
+        await this.$fetch()
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.log(error)
       }
     },
@@ -107,7 +109,9 @@ export default {
             },
           },
         })
+        await this.$fetch()
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.log(error)
       }
     },
