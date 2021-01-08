@@ -1,25 +1,26 @@
 <template>
   <div class="container">
     <div>
-      <LoginForm @login="login($event)" />
+      <SignupForm @signup="signup($event)" />
     </div>
   </div>
 </template>
 
 <script>
-import LoginForm from '~/components/LoginForm/LoginForm'
-import login from '~/apollo/mutations/login.graphql'
+import SignupForm from '~/components/SignupForm/SignupForm'
+import signup from '~/apollo/mutations/signup.graphql'
 
 export default {
-  components: { LoginForm },
+  components: { SignupForm },
   methods: {
-    async login({ email, password }) {
+    async signup({ email, password, name }) {
       try {
         const response = await this.$apollo.mutate({
-          mutation: login,
+          mutation: signup,
           // Parameters
           variables: {
             email,
+            name,
             password,
           },
         })

@@ -7,11 +7,14 @@
           news
         </NuxtLink>
       </div>
-      <div class="option">
+      <div v-if="!this.$store.state.auth.token" class="option">
         <NuxtLink to="/login">Login</NuxtLink>
       </div>
-      <div class="option">
-        <a>Logout</a>
+      <div v-if="!this.$store.state.auth.token" class="option">
+        <NuxtLink to="/signup">Signup</NuxtLink>
+      </div>
+      <div v-if="this.$store.state.auth.token" class="option">
+        <a @click="() => this.$store.commit('auth/reset')">Logout</a>
       </div>
     </nav>
     <main>
