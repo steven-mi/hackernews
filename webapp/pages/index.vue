@@ -38,10 +38,13 @@ export default {
         data = data.map((p) => {
           return {
             ...p,
-            ...{ isOwner: p.author.email === this.$store.state.auth.email },
+            ...{
+              isOwner: p.author.email === this.$store.state.auth.email,
+            },
           }
         })
       }
+      console.log(data)
       this.news = data
     } catch {
       this.news = []
@@ -69,6 +72,9 @@ export default {
         )
       }
     },
+  },
+  async updated() {
+    await this.$fetch()
   },
   methods: {
     async createItem(title) {
