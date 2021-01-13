@@ -2,12 +2,20 @@
   <div id="login-form">
     <form @submit.prevent>
       <label>
-        <input v-model="email" placeholder="Please type your E-Mail here" />
         <input
+          id="input_email"
+          v-model="email"
+          placeholder="Please type your E-Mail here"
+        />
+        <input
+          id="input_password"
           v-model="password"
           placeholder="Please type your password here"
         />
-        <button @click="$emit('login', { email: email, password: password })">
+        <button
+          id="button_login"
+          @click="$emit('login', { email: email, password: password })"
+        >
           Login
         </button>
       </label>
