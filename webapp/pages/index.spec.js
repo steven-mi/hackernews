@@ -52,7 +52,7 @@ xdescribe('Given a non empty list of items and descending order', () => {
 xdescribe('Given a non empty list of items and ascending order', () => {
   let wrapper
   beforeEach(() => {
-    wrapper = mount(App, {
+    wrapper = mount(index, {
       data() {
         return {
           news: [

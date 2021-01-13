@@ -44,7 +44,6 @@ export default {
           }
         })
       }
-      console.log(data)
       this.news = data
     } catch {
       this.news = []

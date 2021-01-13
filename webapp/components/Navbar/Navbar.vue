@@ -23,6 +23,7 @@ import Logo from '@/components/Logo/Logo'
 export default {
   name: 'Navbar',
   components: { Logo },
+  // eslint-disable-next-line vue/require-prop-types
   props: ['isAuthenticated'],
 }
 </script>
