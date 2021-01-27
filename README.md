@@ -1,22 +1,17 @@
-# Systems Development and Frameworks - 2020/21
+# Hackernews
 
-# abteilung6
+![image](.github/website.png)
 
-<p align="center">
-  <img src="https://media.giphy.com/media/xThuWu82QD3pj4wvEQ/giphy.gif" alt="homework" width="50%">
-<p>
 
-## Mitglieder
+**Technology Stack**
+- [VueJS Frontend](https://vuejs.org/)
+- [Apollo GraphQL Backend](https://www.apollographql.com), [GraphQL](https://graphql.org/)
+- [Neo4J](https://neo4j.com/)
 
-> Oliver Kütemeier
-
-> Steven Mi
-
-> Tilman Johannes Möller
+**Tools**
+- [Jest](https://jestjs.io/docs/en/getting-started)
+- [Storybook](https://storybook.js.org)
+- [Nuxt](https://nuxtjs.org/)
 
 ## License
-
-[MIT](.//LICENSE)
-
-**Free Software, Hell Yeah!**
-A commit
+See the [LICENSE](LICENSE.md) file for license rights and limitations (MIT).

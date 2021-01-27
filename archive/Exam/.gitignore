@@ -1,6 +1,0 @@
-*.log
-*.aux
-svg-inkscape/*
-code/graphql/node_modules/
-code/vuejs/node_modules/
-
