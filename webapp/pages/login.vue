@@ -1,8 +1,6 @@
 <template>
   <div class="container">
-    <div>
-      <LoginForm @login="login($event)" />
-    </div>
+    <LoginForm @login="login($event)" />
   </div>
 </template>
 
