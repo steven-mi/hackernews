@@ -1,10 +1,20 @@
 <template>
   <div>
-    <Nuxt />
+    <Navbar :is-authenticated="this.$store.state.auth.token" @logout="logout" />
+    <main>
+      <Nuxt />
+    </main>
   </div>
 </template>
 
 <style>
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
+    Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji,
+    Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+  margin: 0;
+}
+
 html {
   font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI',
     Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -24,32 +34,23 @@ html {
   margin: 0;
 }
 
-.button--green {
-  display: inline-block;
-  border-radius: 4px;
-  border: 1px solid #3b8070;
-  color: #3b8070;
-  text-decoration: none;
-  padding: 10px 30px;
-}
-
-.button--green:hover {
-  color: #fff;
-  background-color: #3b8070;
-}
-
-.button--grey {
-  display: inline-block;
-  border-radius: 4px;
-  border: 1px solid #35495e;
-  color: #35495e;
-  text-decoration: none;
-  padding: 10px 30px;
-  margin-left: 15px;
-}
-
-.button--grey:hover {
-  color: #fff;
-  background-color: #35495e;
+main {
+  margin: 0 auto;
+  padding: 0 1rem;
+  margin-top: 100px;
+  max-width: 1280px;
+  text-align: center;
 }
 </style>
+<script>
+import Navbar from '@/components/Navbar/Navbar'
+
+export default {
+  components: { Navbar },
+  methods: {
+    logout() {
+      this.$store.commit('auth/reset')
+    },
+  },
+}
+</script>

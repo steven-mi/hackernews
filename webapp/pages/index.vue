@@ -1,67 +1,127 @@
 <template>
-  <div class="container">
-    <div>
-      <Logo />
-      <h1 class="title">hackernews</h1>
-      <App />
-      <div class="links">
-        <a
-          href="https://nuxtjs.org/"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="button--green"
-        >
-          Documentation
-        </a>
-        <a
-          href="https://github.com/nuxt/nuxt.js"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="button--grey"
-        >
-          GitHub
-        </a>
-      </div>
-    </div>
+  <div id="container">
+    <h1>News Feed</h1>
+    <List
+      :list-items="sortedNews"
+      :is-authenticated="isAuthenticated"
+      @delete-item="deleteItem($event)"
+      @update-item="updateItem"
+      @sort-item="descending = !descending"
+    ></List>
+    <BasicInput
+      v-if="isAuthenticated"
+      @create-item="createItem($event)"
+    ></BasicInput>
   </div>
 </template>
 
 <script>
-import App from '~/components/App/App'
+import posts from '~/apollo/queries/posts.graphql'
+import write from '~/apollo/mutations/write.graphql'
+import upvote from '~/apollo/mutations/upvote.graphql'
+import BasicInput from '~/components/BasicInput/BasicInput'
+import List from '~/components/List/List'
+
 export default {
-  components: { App },
+  components: {
+    List,
+    BasicInput,
+  },
+  async fetch() {
+    try {
+      const response = await this.$apollo.query({
+        query: posts,
+        fetchPolicy: 'no-cache',
+      })
+      let data = response.data.posts
+      if (this.$store.state.auth.email) {
+        data = data.map((p) => {
+          return {
+            ...p,
+            ...{
+              isOwner: p.author.email === this.$store.state.auth.email,
+            },
+          }
+        })
+      }
+      this.news = data
+    } catch {
+      this.news = []
+    }
+  },
+  data() {
+    return {
+      counter: 3,
+      descending: true,
+      news: [],
+    }
+  },
+  computed: {
+    isAuthenticated() {
+      return !!this.$store.state.auth.token
+    },
+    sortedNews() {
+      if (this.descending) {
+        return [...this.news].sort((a, b) =>
+          a.votes < b.votes ? 1 : b.votes < a.votes ? -1 : 0
+        )
+      } else {
+        return [...this.news].sort((a, b) =>
+          a.votes > b.votes ? 1 : b.votes > a.votes ? -1 : 0
+        )
+      }
+    },
+  },
+  async updated() {
+    await this.$fetch()
+  },
+  methods: {
+    async createItem(title) {
+      try {
+        await this.$apollo.mutate({
+          mutation: write,
+          // Parameters
+          variables: {
+            title,
+          },
+          context: {
+            headers: {
+              Authorization: this.$store.state.auth.token,
+            },
+          },
+        })
+        await this.$fetch()
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.log(error)
+      }
+    },
+    deleteItem(item) {
+      this.news = this.news.filter((el) => el.id !== item.id)
+    },
+    async updateItem(item) {
+      const id = item.id
+      try {
+        await this.$apollo.mutate({
+          mutation: upvote,
+          // Parameters
+          variables: {
+            id,
+          },
+          context: {
+            headers: {
+              Authorization: this.$store.state.auth.token,
+            },
+          },
+        })
+        await this.$fetch()
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.log(error)
+      }
+    },
+  },
 }
 </script>
 
-<style>
-.container {
-  margin: 0 auto;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
-.title {
-  font-family: 'Quicksand', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,
-    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  display: block;
-  font-weight: 300;
-  font-size: 100px;
-  color: #35495e;
-  letter-spacing: 1px;
-}
-
-.subtitle {
-  font-weight: 300;
-  font-size: 42px;
-  color: #526488;
-  word-spacing: 5px;
-  padding-bottom: 15px;
-}
-
-.links {
-  padding-top: 15px;
-}
-</style>
+<style></style>

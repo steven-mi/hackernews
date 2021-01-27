@@ -2,8 +2,10 @@
   <div id="basic-Input">
     <form @submit.prevent>
       <label>
-        <input v-model="newTitle" />
-        <button @click="$emit('create-item', newTitle)">create</button>
+        <input id="input_title" v-model="newTitle" />
+        <button id="button_create" @click="$emit('create-item', newTitle)">
+          Create
+        </button>
       </label>
     </form>
   </div>

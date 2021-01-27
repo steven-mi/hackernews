@@ -5,6 +5,7 @@
       :id="item.id"
       :key="item.id"
       :item="item"
+      :is-authenticated="isAuthenticated"
       @delete-item="$emit('delete-item', $event)"
       @update-item="$emit('update-item', $event)"
     >
@@ -22,7 +23,8 @@ export default {
   components: {
     ListItem,
   },
-  props: ['listItems'],
+  // eslint-disable-next-line vue/require-prop-types
+  props: ['listItems', 'isAuthenticated'],
 }
 </script>
 

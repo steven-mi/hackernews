@@ -29,8 +29,32 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/pwa
     '@nuxtjs/pwa',
+    '@nuxtjs/apollo',
   ],
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {},
+
+  storybook: {
+    // Options
+  },
+
+  apollo: {
+    clientConfigs: {
+      default: {
+        httpEndpoint: 'http://localhost:4000',
+      },
+    },
+  },
+
+  pwa: {
+    manifest: {
+      name: `hackernews`,
+      short_name: `HN`,
+      description: `A news site for hackers, by hackers`,
+      lang: 'en',
+      theme_color: '#00C58E',
+      background_color: '#000',
+    },
+  },
 }

@@ -25,7 +25,7 @@ Test-drive the following features:
 A sample output could look like this:
 ```
 $ yarn run test --verbose
- PASS  src/components/NewsList/NewsList.spec.js
+ PASS  src/components/NewsList/index.spec.js
   NewsList.vue
     :initialItems
       empty
