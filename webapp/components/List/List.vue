@@ -20,7 +20,7 @@
 
         <div class="mt-10">
           <dl
-            class="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10"
+            class="space-y-10 md:space-y-0 md:grid md:grid-cols-3 md:gap-x-8 md:gap-y-10"
           >
             <ListItem
               v-for="item in listItems"
