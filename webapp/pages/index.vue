@@ -1,6 +1,5 @@
 <template>
   <div id="container">
-    <h1>News Feed</h1>
     <List
       :list-items="sortedNews"
       :is-authenticated="isAuthenticated"
