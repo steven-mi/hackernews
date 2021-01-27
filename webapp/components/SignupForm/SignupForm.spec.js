@@ -10,7 +10,7 @@ describe('Given a signup form', () => {
     expect(wrapper.find('input#input_name')).toBeTruthy()
     expect(wrapper.find('input#input_email')).toBeTruthy()
     expect(wrapper.find('input#input_password')).toBeTruthy()
-    expect(wrapper.text()).toContain('Signup')
+    expect(wrapper.text()).toContain('Sign up')
   })
   describe('when pressing signup button', () => {
     beforeEach(() => {

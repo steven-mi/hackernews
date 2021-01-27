@@ -9,7 +9,7 @@ describe('Given a login form', () => {
   it('render input form and buttons', () => {
     expect(wrapper.find('input#input_email')).toBeTruthy()
     expect(wrapper.find('input#input_password')).toBeTruthy()
-    expect(wrapper.text()).toContain('Login')
+    expect(wrapper.text()).toContain('Sign in')
   })
   describe('when pressing login button', () => {
     beforeEach(() => {

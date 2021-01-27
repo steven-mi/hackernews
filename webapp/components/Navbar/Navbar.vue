@@ -50,7 +50,7 @@
               v-if="isAuthenticated"
               id="a_logout"
               @click="() => $emit('logout')"
-              >Logout</a
+              >Sign out</a
             >
           </div>
         </div>
@@ -116,7 +116,7 @@
                 v-if="isAuthenticated"
                 id="a_logout_mobile"
                 @click="() => $emit('logout')"
-                >Logout</a
+                >Sign out</a
               >
             </div>
             <p
@@ -136,24 +136,6 @@
       </div>
     </div>
   </div>
-  <!--  <nav>
-      &lt;!&ndash; This example requires Tailwind CSS v2.0+ &ndash;&gt;
-      <div class="logo">
-        <NuxtLink to="/">
-          <Logo />
-          news
-        </NuxtLink>
-      </div>
-      <div v-if="!isAuthenticated" class="option">
-        <NuxtLink to="/login">Login</NuxtLink>
-      </div>
-      <div v-if="!isAuthenticated" class="option">
-        <NuxtLink to="/signup">Signup</NuxtLink>
-      </div>
-      <div v-if="isAuthenticated" class="option">
-        <a id="a_logout" @click="() => $emit('logout')">Logout</a>
-      </div>
-    </nav>-->
 </template>
 
 <script>

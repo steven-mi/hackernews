@@ -7,8 +7,8 @@ describe('Given a navbar', () => {
     wrapper = mount(Navbar)
   })
   it('render buttons', () => {
-    expect(wrapper.text()).toContain('Login')
-    expect(wrapper.text()).toContain('Signup')
+    expect(wrapper.text()).toContain('Sign in')
+    expect(wrapper.text()).toContain('Sign up')
   })
 })
 
@@ -22,7 +22,7 @@ describe('Given a navbar and a authenticated user', () => {
     })
   })
   it('render buttons', () => {
-    expect(wrapper.text()).toContain('Logout')
+    expect(wrapper.text()).toContain('Sign out')
   })
   describe('when pressing logout button', () => {
     beforeEach(() => {
