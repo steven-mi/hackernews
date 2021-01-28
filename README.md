@@ -10,14 +10,15 @@
 
 - [VueJS Frontend](https://vuejs.org/)
 - [TailWindCSS](https://tailwindcss.com/)
-- [Apollo GraphQL Backend](https://www.apollographql.com), [GraphQL](https://graphql.org/)
+- [Apollo Backend](https://www.apollographql.com)
 - [Neo4J DB](https://neo4j.com/)
 
-**Utility Tools**
+**Additional technologies**
 
 - [Jest](https://jestjs.io/docs/en/getting-started)
 - [Storybook](https://storybook.js.org)
 - [Nuxt](https://nuxtjs.org/)
+- [Vuex](https://vuex.vuejs.org/)
 
 ## Getting Started
 
