@@ -6,9 +6,8 @@ const typeDefs = gql`
         users: [User]
     }
     type Mutation {
-        # OPTIONAL
-        # delete(id: ID!): Post
-        # downvote(id: ID!, voter: UserInput!): Post
+        delete(id: ID!): Post
+        downvote(id: ID!): Post
         upvote(id: ID!): Post
         login(email: String!, password: String!): String
         signup(email: String!, password: String!, name: String!): String

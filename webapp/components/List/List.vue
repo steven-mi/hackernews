@@ -29,7 +29,8 @@
               :item="item"
               :is-authenticated="isAuthenticated"
               @delete-item="$emit('delete-item', $event)"
-              @update-item="$emit('update-item', $event)"
+              @upvote-item="$emit('upvote-item', $event)"
+              @downvote-item="$emit('downvote-item', $event)"
             >
             </ListItem>
           </dl>

@@ -4,7 +4,8 @@
       :list-items="sortedNews"
       :is-authenticated="isAuthenticated"
       @delete-item="deleteItem($event)"
-      @update-item="updateItem"
+      @upvote-item="upvoteItem"
+      @downvote-item="downvoteItem"
       @sort-item="descending = !descending"
     ></List>
     <BasicInput
@@ -18,6 +19,8 @@
 import posts from '~/apollo/queries/posts.graphql'
 import write from '~/apollo/mutations/write.graphql'
 import upvote from '~/apollo/mutations/upvote.graphql'
+import downvote from '~/apollo/mutations/downvote.graphql'
+import deleteQL from '~/apollo/mutations/delete.graphql'
 import BasicInput from '~/components/BasicInput/BasicInput'
 import List from '~/components/List/List'
 
@@ -27,26 +30,22 @@ export default {
     BasicInput,
   },
   async fetch() {
-    try {
-      const response = await this.$apollo.query({
-        query: posts,
-        fetchPolicy: 'no-cache',
+    const response = await this.$apollo.query({
+      query: posts,
+      fetchPolicy: 'no-cache',
+    })
+    let data = response.data.posts
+    if (this.$store.state.auth.email) {
+      data = data.map((p) => {
+        return {
+          ...p,
+          ...{
+            isOwner: p.author.email === this.$store.state.auth.email,
+          },
+        }
       })
-      let data = response.data.posts
-      if (this.$store.state.auth.email) {
-        data = data.map((p) => {
-          return {
-            ...p,
-            ...{
-              isOwner: p.author.email === this.$store.state.auth.email,
-            },
-          }
-        })
-      }
-      this.news = data
-    } catch {
-      this.news = []
     }
+    this.news = data
   },
   data() {
     return {
@@ -95,14 +94,53 @@ export default {
         console.log(error)
       }
     },
-    deleteItem(item) {
-      this.news = this.news.filter((el) => el.id !== item.id)
-    },
-    async updateItem(item) {
+    async upvoteItem(item) {
       const id = item.id
       try {
         await this.$apollo.mutate({
           mutation: upvote,
+          // Parameters
+          variables: {
+            id,
+          },
+          context: {
+            headers: {
+              Authorization: this.$store.state.auth.token,
+            },
+          },
+        })
+        await this.$fetch()
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.log(error)
+      }
+    },
+    async downvoteItem(item) {
+      const id = item.id
+      try {
+        await this.$apollo.mutate({
+          mutation: downvote,
+          // Parameters
+          variables: {
+            id,
+          },
+          context: {
+            headers: {
+              Authorization: this.$store.state.auth.token,
+            },
+          },
+        })
+        await this.$fetch()
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.log(error)
+      }
+    },
+    async deleteItem(item) {
+      const id = item.id
+      try {
+        await this.$apollo.mutate({
+          mutation: deleteQL,
           // Parameters
           variables: {
             id,

@@ -61,8 +61,63 @@ export default ({ subschema }) => ({
             });
 
 
-
             await post.upvote(user);
+            const [resolvedPost] = await delegateToSchema({
+                schema: subschema,
+                operation: "query",
+                fieldName: "Post",
+                args: { id: post.id },
+                context,
+                info,
+            });
+
+            return resolvedPost;
+        },
+        downvote: async(_parent, args, context, info) => {
+            const user = await User.first(context.person);
+            if (!user && !user.checkPassword(password)) return new Error("User does not exist")
+
+            let post = await Post.first({ id: args.id });
+            if (!post) return new Error("Post does not exist")
+            const [resolvedPostBefore] = await delegateToSchema({
+                schema: subschema,
+                operation: "query",
+                fieldName: "Post",
+                args: { id: post.id },
+                context,
+                info,
+            });
+
+
+            await post.downvote(user);
+            const [resolvedPost] = await delegateToSchema({
+                schema: subschema,
+                operation: "query",
+                fieldName: "Post",
+                args: { id: post.id },
+                context,
+                info,
+            });
+
+            return resolvedPost;
+        },
+        delete: async(_parent, args, context, info) => {
+            const user = await User.first(context.person);
+            if (!user && !user.checkPassword(password)) return new Error("User does not exist")
+
+            let post = await Post.first({ id: args.id });
+            if (!post) return new Error("Post does not exist")
+            const [resolvedPostBefore] = await delegateToSchema({
+                schema: subschema,
+                operation: "query",
+                fieldName: "Post",
+                args: { id: post.id },
+                context,
+                info,
+            });
+
+
+            await post.delete();
             const [resolvedPost] = await delegateToSchema({
                 schema: subschema,
                 operation: "query",

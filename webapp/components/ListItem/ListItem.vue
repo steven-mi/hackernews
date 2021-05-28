@@ -38,10 +38,10 @@ export default {
   props: ['item', 'isAuthenticated'],
   methods: {
     upvoteItem() {
-      this.$emit('update-item', { ...this.item, votes: this.item.votes + 1 })
+      this.$emit('upvote-item', { ...this.item, votes: this.item.votes + 1 })
     },
     downvoteItem() {
-      this.$emit('update-item', { ...this.item, votes: this.item.votes - 1 })
+      this.$emit('downvote-item', { ...this.item, votes: this.item.votes - 1 })
     },
   },
 }

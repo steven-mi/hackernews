@@ -25,8 +25,17 @@ export default class Post {
         return this;
     }
 
+    async delete() {
+        this.node.delete()
+    }
+
     async upvote(voter) {
         if (!(voter && voter.node)) throw new Error("voter node is missing!");
         await this.node.relateTo(voter.node, "voters");
+    }
+
+    async downvote(voter) {
+        if (!(voter && voter.node)) throw new Error("voter node is missing!");
+        await this.node.detach(voter.node, "voters");
     }
 }
